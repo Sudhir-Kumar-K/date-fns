@@ -18,7 +18,24 @@ function benchmarkJSONReporter () {
   }
 
   this.onRunComplete = function () {
-    fs.writeFile(benchmarkResultFilename, JSON.stringify(benchmarkResult), 'utf-8', function (err) {
+    var benchmarkResultArray = []
+    for (var fnName in benchmarkResult) {
+      if (benchmarkResult.hasOwnProperty(fnName)) {
+        var element = {fn: fnName}
+
+        if (benchmarkResult[fnName]['date-fns']) {
+          element.dateFns = benchmarkResult[fnName]['date-fns']
+        }
+
+        if (benchmarkResult[fnName]['Moment.js']) {
+          element.moment = benchmarkResult[fnName]['Moment.js']
+        }
+
+        benchmarkResultArray.push(element)
+      }
+    }
+
+    fs.writeFile(benchmarkResultFilename, JSON.stringify(benchmarkResultArray), 'utf-8', function (err) {
       if (err) {
         throw err
       }
